@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -13,7 +14,7 @@ public class MessagePasser {
 	private Lock inputQueueLock = new ReentrantLock();
 	private int newID = 0;
 	
-	public MessagePasser(String configFilename, String localName) {
+	public MessagePasser(String configFilename, String localName) throws FileNotFoundException {
 		currentConfig = new MPConfig(configFilename, localName);
 		
 		Thread tSend = new Thread(new SendRunnable());

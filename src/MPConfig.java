@@ -2,6 +2,8 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -9,14 +11,24 @@ import org.yaml.snakeyaml.constructor.Constructor;
 
 
 public class MPConfig {
-	public MPConfig(String configFilename, String localName) {
-		readYAML(configFilename);
+	public MPConfig(String configFilename, String localName) throws FileNotFoundException {
+		InputStream input = new FileInputStream(new File(configFilename));
+		Yaml yaml = new Yaml();
+		Object sections = yaml.load(input);
+		sections.equals(1);
 	}
 	
-	private void readYAML(String configFilename) {
-		
+	public Map<String, Node> getNodes() {
+		return null;
+	}
+	public List<Rule> getSendRule() {
+		return null;
+	}
+	public List<Rule> getReceiveRule() {
+		return null;
 	}
 	
+
 	public static void main(String[] args) throws FileNotFoundException {
 		/*
 		Constructor constructor = new Constructor(Node.class);
@@ -31,10 +43,8 @@ public class MPConfig {
 		
 		InputStream input;
 		try {
-			input = new FileInputStream(new File("config.yaml"));
-			Yaml yaml = new Yaml();
-		    Object data = yaml.load(input);
-		    Node node = (Node) data;
+			MPConfig config = new MPConfig("config.yaml", "none");
+			
 		    
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
