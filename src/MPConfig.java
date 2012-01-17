@@ -10,6 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 
+
 public class MPConfig {
 	public MPConfig(String configFilename, String localName) throws FileNotFoundException {
 		InputStream input = new FileInputStream(new File(configFilename));

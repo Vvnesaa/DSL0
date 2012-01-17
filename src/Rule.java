@@ -1,5 +1,15 @@
 
+enum ACTION{
+	NOTHING, DROP, DELAY, DUPLICATE,
+}
 public class Rule {
+	// TODO: nth parameter is really ugly here, but 
+	// in some rules we need to know the "nth" info.
+	ACTION matches(Message message, int nth) {
+		return ACTION.NOTHING;
+	}
+	
+	
 	private String Action = null;
 	private String Src = null;
 	private String Dest = null;
