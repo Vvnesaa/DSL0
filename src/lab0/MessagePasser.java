@@ -5,13 +5,12 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -44,7 +43,14 @@ public class MessagePasser {
 	// only match the first applied rule
 	// but still need to check all rules for "Nth"
 	private ACTION checkSendRules(Message m) {
-		return ACTION.NOTHING;
+		List<Rule> rules = currentConfig.getSendRules();
+		ACTION result = ACTION.NOTHING;
+		for (Rule r : rules) {
+			ACTION temp = r.matches(m, 0); // HAS PROBLEM!!!
+			if (result == ACTION.NOTHING)
+				result = temp; 
+		}
+		return result;
 	}
 
 	// user send message to tail of outputMessage queue
@@ -120,7 +126,6 @@ public class MessagePasser {
 				} else {
 					m = outputMessage.removeFirst();
 					outputQueueLock.unlock();
-
 					Node dest = currentConfig.getNodes().get(m.getDest());
 					Socket s = null;
 					try {
@@ -171,7 +176,14 @@ public class MessagePasser {
 	// only match the first applied rule
 	// but still need to check all rules for "Nth"
 	private ACTION checkReceiveRules(Message m) {
-		return ACTION.NOTHING;
+		List<Rule> rules = currentConfig.getReceiveRules();
+		ACTION result = ACTION.NOTHING;
+		for (Rule r : rules) {
+			ACTION temp = r.matches(m, 0); // HAS PROBLEM!!!
+			if (result == ACTION.NOTHING)
+				result = temp; 
+		}
+		return result;
 	}
 
 	// Same assumptions for ACTION as send()
