@@ -3,7 +3,7 @@ public class Node {
 	private String Name;
 	private String IP;
 	private int Port;
-	
+
 	public String getName() {
 		return Name;
 	}
