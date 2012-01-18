@@ -54,7 +54,7 @@ public class MPConfig {
 		List<Rule> rules = new ArrayList<Rule>();
 		for (Object item : list) {
 			LinkedHashMap info = (LinkedHashMap) item;
-			Rule rule = new Rule();
+			
 
 			// TODO: REMEMBER to remove these ugly duplications.
 			Map<String, ACTION> mapper = getActionMapper();
@@ -63,7 +63,7 @@ public class MPConfig {
 			// TODO: CHANGE this to exception
 			assert !mapper.containsKey(actionString);
 			ACTION action = mapper.get(actionString);
-			rule.setAction(action);
+			Rule rule = new Rule(action);
 			
 			if (info.containsKey("Src"))
 				rule.setSrc(info.get("Src").toString());

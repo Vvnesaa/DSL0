@@ -1,7 +1,4 @@
 package lab0;
-enum ACTION {
-	NOTHING, DROP, DELAY, DUPLICATE,
-}
 
 public class Rule {
 	// --- Public interface
@@ -10,7 +7,7 @@ public class Rule {
 	// I think the "nth" goes with rules, so maybe we
 	// should keep track of count in rules (not outside).
 	public ACTION matches(Message message, int nth) {
-		if (itemMatches(this.src, message.getDest())
+		if (itemMatches(this.src, message.getSrc())
 				&& itemMatches(this.id, message.getId())
 				&& itemMatches(this.nth, nth)
 				&& itemMatches(this.kind, message.getKind())
@@ -20,7 +17,12 @@ public class Rule {
 		return ACTION.NOTHING;
 	}
 
+	// -- Constructors
+	public Rule(ACTION action) {
+		this.action = action;
+	}
 
+	// -- Accessors
 	public ACTION getAction() {
 		return action;
 	}
@@ -68,15 +70,16 @@ public class Rule {
 	public void setNth(int Nth) {
 		this.nth = Nth;
 	}
-	
+
 	// --- Utilities
-	private boolean itemMatches(String expected, String actual) {
+	private boolean itemMatches(String ruleField, String messageField) {
 		// if expected is not set, then it should be automatically be true
-		return expected == null || expected == actual;
+		return ruleField == null || messageField == ruleField;
 	}
-	private boolean itemMatches(int expected, int actual) {
+
+	private boolean itemMatches(int ruleField, int messageField) {
 		// if expected is not set, then it should be automatically be true
-		return expected == -1 || expected == actual;
+		return ruleField == -1 || messageField == ruleField;
 	}
 
 	// --- Data

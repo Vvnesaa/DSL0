@@ -1,8 +1,9 @@
 package lab0;
 
 public class Node {
+	private final int IP_PARTS_COUNT = 4;
 	private String Name;
-	private byte[] IP = new byte[4];
+	private byte[] IP = new byte[IP_PARTS_COUNT];
 	private int Port = -1;
 
 	public String getName() {
@@ -19,8 +20,7 @@ public class Node {
 	
 	public void setIP(String IP) {
 		String[] parts = IP.split("\\.");
-		// TODO MATIC NUMBER
-		for (int i = 0; i < 4; ++i) {
+		for (int i = 0; i < IP_PARTS_COUNT; ++i) {
 			byte number = (byte)Integer.parseInt(parts[i]);
 			this.IP[i] = number;
 		}
