@@ -1,8 +1,10 @@
+package lab0;
 enum ACTION {
 	NOTHING, DROP, DELAY, DUPLICATE,
 }
 
 public class Rule {
+	// --- Public interface
 	// TODO: nth parameter is really ugly here, but
 	// in some rules we need to know the "nth" info.
 	// I think the "nth" goes with rules, so maybe we
@@ -18,14 +20,6 @@ public class Rule {
 		return ACTION.NOTHING;
 	}
 
-	private boolean itemMatches(String expected, String actual) {
-		// if expected is not set, then it should be automatically be true
-		return expected == null || expected == actual;
-	}
-	private boolean itemMatches(int expected, int actual) {
-		// if expected is not set, then it should be automatically be true
-		return expected == -1 || expected == actual;
-	}
 
 	public ACTION getAction() {
 		return action;
@@ -73,6 +67,16 @@ public class Rule {
 
 	public void setNth(int Nth) {
 		this.nth = Nth;
+	}
+	
+	// --- Utilities
+	private boolean itemMatches(String expected, String actual) {
+		// if expected is not set, then it should be automatically be true
+		return expected == null || expected == actual;
+	}
+	private boolean itemMatches(int expected, int actual) {
+		// if expected is not set, then it should be automatically be true
+		return expected == -1 || expected == actual;
 	}
 
 	// --- Data
