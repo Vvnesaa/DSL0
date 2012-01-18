@@ -43,8 +43,11 @@ public class MPConfig {
     // TODO: TO REFACTOR - Really really disgusting implementation.
     @SuppressWarnings("rawtypes")
     private HashMap<String, Node> extractNodes(Object rawConfig) {
-        ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
-                .get("Configuration");
+        LinkedHashMap map = (LinkedHashMap) rawConfig;
+        if (map.get("Configuration") == null)
+            return new HashMap<String, Node>();
+
+        ArrayList list = (ArrayList) (map.get("Configuration"));
 
         HashMap<String, Node> nodes = new HashMap<String, Node>();
         for (Object item : list) {
@@ -59,11 +62,14 @@ public class MPConfig {
             nodes.put(node.getName(), node);
         }
         return nodes;
+
     }
 
     // TODO TO REFACTOR: YET another ugly code.
     @SuppressWarnings("rawtypes")
     private List<Rule> extractRules(Object rawConfig, String sectionName) {
+        if (!((Map) rawConfig).containsKey(sectionName))
+            return new ArrayList<Rule>();
         ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
                 .get(sectionName);
 
@@ -126,7 +132,7 @@ public class MPConfig {
 
     private void updateConfiguration() {
         timestampeLock.lock();
-        if (getTimeStamp(configFilename) > this.timestamp)
+        if (getTimeStamp(configFilename) > this.timestamp) {
             try {
                 timestamp = loadConfiguration(configFilename);
             } catch (FileNotFoundException e) {
@@ -134,6 +140,7 @@ public class MPConfig {
                         .println("WARNING: the configuration file is missing!");
                 e.printStackTrace();
             }
+        }
         timestampeLock.unlock();
     }
 
