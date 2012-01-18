@@ -19,11 +19,11 @@ public class Node {
 	}
 	
 	public void setIP(String IP) {
-		String[] parts = IP.split("\\.");
-		for (int i = 0; i < IP_PARTS_COUNT; ++i) {
-			byte number = (byte)Integer.parseInt(parts[i]);
-			this.IP[i] = number;
-		}
+        String[] parts = IP.split("\\.");
+        for (int i = 0; i < IP_PARTS_COUNT; ++i) {
+            byte number = (byte)Integer.parseInt(parts[i]);
+            this.IP[i] = number;
+        }
 	}
 	
 	public int getPort() {

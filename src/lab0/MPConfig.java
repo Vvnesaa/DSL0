@@ -61,8 +61,8 @@ public class MPConfig {
 			String actionString = info.get("Action").toString();
 			
 			// TODO: CHANGE this to exception
-			assert !mapper.containsKey(actionString);
 			ACTION action = mapper.get(actionString);
+			assert action != null;
 			Rule rule = new Rule(action);
 			
 			if (info.containsKey("Src"))
@@ -98,9 +98,10 @@ public class MPConfig {
 	// --- Utilities
 	private static Map<String, ACTION> getActionMapper() {
 		if (actionMapper == null) {
-			actionMapper.put("Drop", ACTION.DROP);
-			actionMapper.put("Delay", ACTION.DELAY);
-			actionMapper.put("Duplicate", ACTION.DUPLICATE);
+		    actionMapper = new HashMap<String, ACTION>();
+			actionMapper.put("drop", ACTION.DROP);
+			actionMapper.put("delay", ACTION.DELAY);
+			actionMapper.put("duplicate", ACTION.DUPLICATE);
 		}
 		return actionMapper;
 	}
