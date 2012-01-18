@@ -11,7 +11,6 @@ public class Rule {
 		return ACTION.NOTHING;
 	}
 	
-	
 	private String Action = null;
 	private String Src = null;
 	private String Dest = null;
