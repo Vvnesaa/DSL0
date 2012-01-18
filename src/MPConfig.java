@@ -93,17 +93,6 @@ public class MPConfig {
 
 	// -- test method
 	public static void main(String[] args) throws FileNotFoundException {
-		/*
-		 * Constructor constructor = new Constructor(Node.class); Yaml yaml =
-		 * new Yaml(constructor); InputStream input = new FileInputStream(new
-		 * File("config.yaml")); Node rule = (Node) yaml.load(input);
-		 */
-
-		// System.out.println(rule.getAction() + " " + rule.getSrc() + " " +
-		// rule.getDest() + " " + rule.getKind() + " " + rule.getID() + " " +
-		// rule.getNth());
-
-		InputStream input;
 		try {
 			MPConfig config = new MPConfig("config.yaml", "none");
 

@@ -1,8 +1,8 @@
 
 public class Node {
 	private String Name;
-	private String IP;
-	private int Port;
+	private byte[] IP = new byte[4];
+	private int Port = -1;
 
 	public String getName() {
 		return Name;
@@ -12,12 +12,17 @@ public class Node {
 		this.Name = Name;
 	}
 	
-	public String getIP() {
+	public byte[] getIP() {
 		return IP;
 	}
 	
 	public void setIP(String IP) {
-		this.IP = IP;
+		String[] parts = IP.split("\\.");
+		// TODO MATIC NUMBER
+		for (int i = 0; i < 4; ++i) {
+			byte number = (byte)Integer.parseInt(parts[i]);
+			this.IP[i] = number;
+		}
 	}
 	
 	public int getPort() {
