@@ -111,16 +111,4 @@ public class MPConfig {
 	private List<Rule> sendRules;
 	private Map<String, Node> nodes;
 	private static Map<String, ACTION> actionMapper;
-
-	// -- test method
-	public static void main(String[] args) throws FileNotFoundException {
-		try {
-			MPConfig config = new MPConfig("config.yaml", "none");
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 }
