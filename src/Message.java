@@ -7,6 +7,7 @@ public class Message implements Serializable {
 	private String src;
 	private String dest;
 	private String kind;
+
 	private Serializable data;
 
 	public Message(String src, String dest, String kind, Serializable data) {
@@ -25,7 +26,15 @@ public class Message implements Serializable {
 		return dest;
 	}
 	
-	public void set_id(int id) {
+	public void setId(int id) {
 		this.id = id;
+	}
+
+	public int getId() {
+		return this.id;
+	}
+
+	public String getKind() {
+		return this.kind;
 	}
 }
