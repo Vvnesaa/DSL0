@@ -116,7 +116,13 @@ public class MessagePasser {
 				else {
 					m = outputMessage.removeFirst();
 					outputQueueLock.unlock();
-					Socket s = new Socket(InetAddress.getByAddress(currentConfig.getNodeIPByteByName(m.getDest())), currentConfig.getNodePortByName(m.getDest()));
+					
+					//currentConfig.getNodes().get(m.getDest()).
+					
+					String dest = m.getDest();
+					int PortNumber = currentConfig.getNodes().get(dest).getPort();
+					
+					Socket s = new Socket(InetAddress.getByAddress(currentConfig.getNodeIPByteByName(m.getDest())), PortNumber);
 					try {
 						OutputStream outStream = s.getOutputStream();
 						ObjectOutputStream out = new ObjectOutputStream(outStream);
@@ -134,7 +140,7 @@ public class MessagePasser {
 		@Override
 		public void run() {
 			try {
-				ServerSocket s = new ServerSocket(currentConfig.getNodePortByName(localName));
+				ServerSocket s = new ServerSocket(currentConfig.getNodes().get(localName).getPort());
 				while (true) {
 					Socket incoming = s.accept();
 					Thread t = new Thread(new ReceiveRunnableHandler(incoming));
