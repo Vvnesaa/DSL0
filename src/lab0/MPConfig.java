@@ -1,4 +1,5 @@
 package lab0;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,107 +9,140 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.yaml.snakeyaml.Yaml;
 
 public class MPConfig {
-	public MPConfig(String configFilename, String localName)
-			throws FileNotFoundException {
-		Yaml yaml = new Yaml();
+    public MPConfig(String configFilename, String localName)
+            throws FileNotFoundException {
+        this.configFilename = configFilename;
+        timestamp = loadConfiguration(configFilename);
+    }
 
-		InputStream input = new FileInputStream(new File(configFilename));
-		Object rawConfig = yaml.load(input);
+    private long getTimeStamp(String filepath) {
+        return new File(filepath).lastModified();
+    }
 
-		nodes = extractNodes(rawConfig);
-		sendRules = extractRules(rawConfig, "SendRules");
-		receiveRules = extractRules(rawConfig, "ReceiveRules");
-	}
+    private long loadConfiguration(String configFilename)
+            throws FileNotFoundException {
+        Yaml yaml = new Yaml();
 
-	// TODO: TO REFACTOR - Really really disgusting implementation.
-	@SuppressWarnings("rawtypes")
-	private HashMap<String, Node> extractNodes(Object rawConfig) {
-		ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
-				.get("Configuration");
+        File configFile = new File(configFilename);
+        InputStream input = new FileInputStream(configFile);
+        Object rawConfig = yaml.load(input);
 
-		HashMap<String, Node> nodes = new HashMap<String, Node>();
-		for (Object item : list) {
-			LinkedHashMap info = (LinkedHashMap) item;
+        nodes = extractNodes(rawConfig);
+        sendRules = extractRules(rawConfig, "SendRules");
+        receiveRules = extractRules(rawConfig, "ReceiveRules");
 
-			Node node = new Node();
+        return configFile.lastModified();
+    }
 
-			node.setName(info.get("Name").toString());
-			node.setIP(info.get("IP").toString());
-			node.setPort(((Integer) info.get("Port")).intValue());
+    // TODO: TO REFACTOR - Really really disgusting implementation.
+    @SuppressWarnings("rawtypes")
+    private HashMap<String, Node> extractNodes(Object rawConfig) {
+        ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
+                .get("Configuration");
 
-			nodes.put(node.getName(), node);
-		}
-		return nodes;
-	}
+        HashMap<String, Node> nodes = new HashMap<String, Node>();
+        for (Object item : list) {
+            LinkedHashMap info = (LinkedHashMap) item;
 
-	// TODO TO REFACTOR: YET another ugly code.
-	@SuppressWarnings("rawtypes")
-	private List<Rule> extractRules(Object rawConfig, String sectionName) {
-		ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
-				.get(sectionName);
+            Node node = new Node();
 
-		List<Rule> rules = new ArrayList<Rule>();
-		for (Object item : list) {
-			LinkedHashMap info = (LinkedHashMap) item;
-			
+            node.setName(info.get("Name").toString());
+            node.setIP(info.get("IP").toString());
+            node.setPort(((Integer) info.get("Port")).intValue());
 
-			// TODO: REMEMBER to remove these ugly duplications.
-			Map<String, ACTION> mapper = getActionMapper();
-			String actionString = info.get("Action").toString();
-			
-			// TODO: CHANGE this to exception
-			ACTION action = mapper.get(actionString);
-			assert action != null;
-			Rule rule = new Rule(action);
-			
-			if (info.containsKey("Src"))
-				rule.setSrc(info.get("Src").toString());
-			if (info.containsKey("Dest"))
-				rule.setDest(info.get("Dest").toString());
-			if (info.containsKey("Kind"))
-				rule.setKind(info.get("Kind").toString());
+            nodes.put(node.getName(), node);
+        }
+        return nodes;
+    }
 
-			if (info.containsKey("ID"))
-				rule.setID(((Integer) info.get("ID")).intValue());
-			if (info.containsKey("Nth"))
-				rule.setNth(((Integer) info.get("Nth")).intValue());
+    // TODO TO REFACTOR: YET another ugly code.
+    @SuppressWarnings("rawtypes")
+    private List<Rule> extractRules(Object rawConfig, String sectionName) {
+        ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
+                .get(sectionName);
 
-			rules.add(rule);
-		}
-		return rules;
-	}
+        List<Rule> rules = new ArrayList<Rule>();
+        for (Object item : list) {
+            LinkedHashMap info = (LinkedHashMap) item;
 
-	// --- Accessers
-	public List<Rule> getSendRules() {
-		return sendRules;
-	}
+            // TODO: REMEMBER to remove these ugly duplications.
+            Map<String, ACTION> mapper = getActionMapper();
+            String actionString = info.get("Action").toString();
 
-	public List<Rule> getReceiveRules() {
-		return receiveRules;
-	}
+            // TODO: CHANGE this to exception
+            ACTION action = mapper.get(actionString);
+            assert action != null;
+            Rule rule = new Rule(action);
 
-	public Map<String, Node> getNodes() {
-		return nodes;
-	}
+            if (info.containsKey("Src"))
+                rule.setSrc(info.get("Src").toString());
+            if (info.containsKey("Dest"))
+                rule.setDest(info.get("Dest").toString());
+            if (info.containsKey("Kind"))
+                rule.setKind(info.get("Kind").toString());
 
-	// --- Utilities
-	private static Map<String, ACTION> getActionMapper() {
-		if (actionMapper == null) {
-		    actionMapper = new HashMap<String, ACTION>();
-			actionMapper.put("drop", ACTION.DROP);
-			actionMapper.put("delay", ACTION.DELAY);
-			actionMapper.put("duplicate", ACTION.DUPLICATE);
-		}
-		return actionMapper;
-	}
+            if (info.containsKey("ID"))
+                rule.setID(((Integer) info.get("ID")).intValue());
+            if (info.containsKey("Nth"))
+                rule.setNth(((Integer) info.get("Nth")).intValue());
 
-	// -- Data
-	private List<Rule> receiveRules;
-	private List<Rule> sendRules;
-	private Map<String, Node> nodes;
-	private static Map<String, ACTION> actionMapper;
+            rules.add(rule);
+        }
+        return rules;
+    }
+
+    // --- Accessers
+    public List<Rule> getSendRules() {
+        updateConfiguration();
+        return sendRules;
+    }
+
+    public List<Rule> getReceiveRules() {
+        updateConfiguration();
+        return receiveRules;
+    }
+
+    public Map<String, Node> getNodes() {
+        updateConfiguration();
+        return nodes;
+    }
+
+    // --- Utilities
+    private static Map<String, ACTION> getActionMapper() {
+        if (actionMapper == null) {
+            actionMapper = new HashMap<String, ACTION>();
+            actionMapper.put("drop", ACTION.DROP);
+            actionMapper.put("delay", ACTION.DELAY);
+            actionMapper.put("duplicate", ACTION.DUPLICATE);
+        }
+        return actionMapper;
+    }
+
+    private void updateConfiguration() {
+        timestampeLock.lock();
+        if (getTimeStamp(configFilename) > this.timestamp)
+            try {
+                timestamp = loadConfiguration(configFilename);
+            } catch (FileNotFoundException e) {
+                System.out
+                        .println("WARNING: the configuration file is missing!");
+                e.printStackTrace();
+            }
+        timestampeLock.unlock();
+    }
+
+    // -- Data
+    private List<Rule> receiveRules;
+    private List<Rule> sendRules;
+    private Map<String, Node> nodes;
+    private static Map<String, ACTION> actionMapper;
+    private String configFilename;
+    private long timestamp;
+    private Lock timestampeLock = new ReentrantLock();
 }
