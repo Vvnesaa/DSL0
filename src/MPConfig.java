@@ -45,6 +45,7 @@ public class MPConfig {
 	}
 
 	// TODO TO REFACTOR: YET another ugly code.
+	@SuppressWarnings("rawtypes")
 	private List<Rule> extractRules(Object rawConfig, String sectionName) {
 		ArrayList list = (ArrayList) ((LinkedHashMap) rawConfig)
 				.get(sectionName);
@@ -54,19 +55,26 @@ public class MPConfig {
 			LinkedHashMap info = (LinkedHashMap) item;
 			Rule rule = new Rule();
 
-            // TODO: REMEMBER to remove these ugly duplications.
-			rule.setAction(info.get("Action").toString());
+			// TODO: REMEMBER to remove these ugly duplications.
+			Map<String, ACTION> mapper = getActionMapper();
+			String actionString = info.get("Action").toString();
+			
+			// TODO: CHANGE this to exception
+			assert !mapper.containsKey(actionString);
+			ACTION action = mapper.get(actionString);
+			rule.setAction(action);
+			
 			if (info.containsKey("Src"))
 				rule.setSrc(info.get("Src").toString());
 			if (info.containsKey("Dest"))
-                rule.setDest(info.get("Dest").toString());
+				rule.setDest(info.get("Dest").toString());
 			if (info.containsKey("Kind"))
-                rule.setKind(info.get("Kind").toString());
+				rule.setKind(info.get("Kind").toString());
 
 			if (info.containsKey("ID"))
-                rule.setID(((Integer) info.get("ID")).intValue());
+				rule.setID(((Integer) info.get("ID")).intValue());
 			if (info.containsKey("Nth"))
-                rule.setNth(((Integer) info.get("Nth")).intValue());
+				rule.setNth(((Integer) info.get("Nth")).intValue());
 
 			rules.add(rule);
 		}
@@ -86,10 +94,21 @@ public class MPConfig {
 		return nodes;
 	}
 
+	// --- Utilities
+	private static Map<String, ACTION> getActionMapper() {
+		if (actionMapper == null) {
+			actionMapper.put("Drop", ACTION.DROP);
+			actionMapper.put("Delay", ACTION.DELAY);
+			actionMapper.put("Duplicate", ACTION.DUPLICATE);
+		}
+		return actionMapper;
+	}
+
 	// -- Data
 	private List<Rule> receiveRules;
 	private List<Rule> sendRules;
 	private Map<String, Node> nodes;
+	private static Map<String, ACTION> actionMapper;
 
 	// -- test method
 	public static void main(String[] args) throws FileNotFoundException {

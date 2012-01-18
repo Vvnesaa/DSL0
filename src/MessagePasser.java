@@ -53,7 +53,7 @@ public class MessagePasser {
 		// Check Config File Change => Problem!!! What if my port change?
 		// interrupt receive thread? How to handle?
 
-		message.set_id(newID++);
+		message.setId(newID++);
 		ACTION action = checkSendRules(message);
 		if (action == ACTION.DROP)
 			return;
