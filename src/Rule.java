@@ -5,7 +5,9 @@ enum ACTION{
 public class Rule {
 	// TODO: nth parameter is really ugly here, but 
 	// in some rules we need to know the "nth" info.
-	ACTION matches(Message message, int nth) {
+	// I think the "nth" goes with rules, so maybe we 
+	// should keep track of count in rules (not outside).
+	ACTION matches(Message message) {
 		return ACTION.NOTHING;
 	}
 	
