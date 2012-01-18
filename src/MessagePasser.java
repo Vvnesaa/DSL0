@@ -8,16 +8,16 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-
 public class MessagePasser {
 	private static final int EmptyInRcvSleepTime = 500;
 	private static final int EmptyOutSdSleepTime = 500;
-	
+
 	private MPConfig currentConfig;
 	private LinkedList<Message> outputMessage = new LinkedList<Message>();
 	private LinkedList<Message> inputMessage = new LinkedList<Message>();
@@ -28,34 +28,37 @@ public class MessagePasser {
 	private Lock delayInputLock = new ReentrantLock();
 	private int newID = 0;
 	private String localName;
-	
-	public MessagePasser(String configFilename, String localName) throws FileNotFoundException {
+
+	public MessagePasser(String configFilename, String localName)
+			throws FileNotFoundException {
 		this.localName = localName;
 		currentConfig = new MPConfig(configFilename, localName);
-		
+
 		Thread tSend = new Thread(new SendRunnable());
 		Thread tReceive = new Thread(new ReceiveRunnable());
 		tSend.start();
 		tReceive.start();
 	}
-	
+
 	// only match the first applied rule
 	// but still need to check all rules for "Nth"
 	private ACTION checkSendRules(Message m) {
 		return ACTION.NOTHING;
 	}
-	
+
 	// user send message to tail of outputMessage queue
 	// m1(delay) -> m2(duplicate) : m2, m2, m1
 	// m1(delay) -> m2(delay) -> m3(nothing) : m3, m1, m2
 	// first check config file change
 	public void send(Message message) {
-		
-		//Check Config File Change => Problem!!! What if my port change? interrupt receive thread? How to handle?
-		
+
+		// Check Config File Change => Problem!!! What if my port change?
+		// interrupt receive thread? How to handle?
+
 		message.set_id(newID++);
-		ACTION action = checkSendRules(message); 
-		if (action == ACTION.DROP) return;
+		ACTION action = checkSendRules(message);
+		if (action == ACTION.DROP)
+			return;
 		if (action == ACTION.DELAY) {
 			delayOutput.add(message);
 			return;
@@ -71,14 +74,15 @@ public class MessagePasser {
 			outputQueueLock.unlock();
 		}
 	}
-	
+
 	// user get message from head of inputMessage queue
 	// block while inputMessage queue is empty
 	// first check config file change
 	public Message receive() {
-		
-		//Check Config File Change => Problem!!! What if my port change? interrupt receive thread? How to handle?
-		
+
+		// Check Config File Change => Problem!!! What if my port change?
+		// interrupt receive thread? How to handle?
+
 		Message result;
 		while (true) {
 			inputQueueLock.lock();
@@ -96,7 +100,7 @@ public class MessagePasser {
 		}
 		return result;
 	}
-	
+
 	// MP send message from head of outputMessage queue
 	private class SendRunnable implements Runnable {
 		@Override
@@ -112,29 +116,46 @@ public class MessagePasser {
 						e.printStackTrace();
 					}
 					continue;
-				}
-				else {
+				} else {
 					m = outputMessage.removeFirst();
 					outputQueueLock.unlock();
-					Socket s = new Socket(InetAddress.getByAddress(currentConfig.getNodeIPByteByName(m.getDest())), currentConfig.getNodePortByName(m.getDest()));
+
+					Node dest = currentConfig.getNodes().get(m.getDest());
+					Socket s = null;
 					try {
+						s = new Socket(InetAddress.getByAddress(dest.getIP()),
+								dest.getPort());
 						OutputStream outStream = s.getOutputStream();
-						ObjectOutputStream out = new ObjectOutputStream(outStream);
+						ObjectOutputStream out = new ObjectOutputStream(
+								outStream);
 						out.writeObject(m);
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					} finally {
-						s.close();
+						if (s != null)
+							try {
+								s.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 					}
 				}
 			}
 		}
 	}
-	
+
 	// MP receive message to tail of inputMessage queue
 	private class ReceiveRunnable implements Runnable {
 		@Override
 		public void run() {
 			try {
-				ServerSocket s = new ServerSocket(currentConfig.getNodePortByName(localName));
+				int port = currentConfig.getNodes().get(localName).getPort();
+				ServerSocket s = new ServerSocket(port);
 				while (true) {
 					Socket incoming = s.accept();
 					Thread t = new Thread(new ReceiveRunnableHandler(incoming));
@@ -145,21 +166,21 @@ public class MessagePasser {
 			}
 		}
 	}
-	
+
 	// only match the first applied rule
 	// but still need to check all rules for "Nth"
 	private ACTION checkReceiveRules(Message m) {
 		return ACTION.NOTHING;
 	}
-	
+
 	// Same assumptions for ACTION as send()
 	private class ReceiveRunnableHandler implements Runnable {
 		private Socket incoming;
-		
+
 		public ReceiveRunnableHandler(Socket i) {
 			incoming = i;
 		}
-		
+
 		@Override
 		public void run() {
 			try {
