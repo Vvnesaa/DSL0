@@ -34,7 +34,7 @@ public class MessagePasser {
 	private Thread tSend;
 
 	public MessagePasser(String configFilename, String localName)
-			throws FileNotFoundException {
+			throws IOException {
 		this.localName = localName;
 		currentConfig = new MPConfig(configFilename, localName);
 		localPort = currentConfig.getNodes().get(localName).getPort();

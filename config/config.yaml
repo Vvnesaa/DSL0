@@ -20,9 +20,9 @@ SendRules:
     ID: 4
   - Action: delay
     Kind: Request
+  - Action: duplicate
+    Kind: dup
 
 ReceiveRules:
-  - Action: drop
-    Src: alice
   - Action: delay
     Src: bob

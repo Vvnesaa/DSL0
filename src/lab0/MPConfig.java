@@ -3,6 +3,7 @@ package lab0;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +13,13 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.imageio.stream.FileImageOutputStream;
+
 import org.yaml.snakeyaml.Yaml;
 
 public class MPConfig {
     public MPConfig(String configFilename, String localName)
-            throws FileNotFoundException {
+            throws IOException {
         this.configFilename = configFilename;
         timestamp = loadConfiguration(configFilename);
     }
@@ -26,7 +29,7 @@ public class MPConfig {
     }
 
     private long loadConfiguration(String configFilename)
-            throws FileNotFoundException {
+            throws IOException {
         Yaml yaml = new Yaml();
 
         File configFile = new File(configFilename);
@@ -37,6 +40,7 @@ public class MPConfig {
         sendRules = extractRules(rawConfig, "SendRules");
         receiveRules = extractRules(rawConfig, "ReceiveRules");
 
+        input.close();
         return configFile.lastModified();
     }
 
@@ -132,7 +136,7 @@ public class MPConfig {
         if (getTimeStamp(configFilename) > this.timestamp) {
             try {
                 timestamp = loadConfiguration(configFilename);
-            } catch (FileNotFoundException e) {
+            } catch (IOException e) {
                 System.out
                         .println("WARNING: the configuration file is missing!");
                 e.printStackTrace();
