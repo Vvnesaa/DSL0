@@ -30,6 +30,8 @@ public class MessagePasser {
 	private int newID = 0;
 	private String localName;
 	private int localPort = 0;
+	private Thread tReceive;
+	private Thread tSend;
 
 	public MessagePasser(String configFilename, String localName)
 			throws FileNotFoundException {
@@ -37,10 +39,15 @@ public class MessagePasser {
 		currentConfig = new MPConfig(configFilename, localName);
 		localPort = currentConfig.getNodes().get(localName).getPort();
 
-		Thread tSend = new Thread(new SendRunnable());
-		Thread tReceive = new Thread(new ReceiveRunnable());
+		tSend = new Thread(new SendRunnable());
+		tReceive = new Thread(new ReceiveRunnable());
 		tSend.start();
 		tReceive.start();
+	}
+	
+	public void close() {
+		tReceive.interrupt();
+		tSend.interrupt();
 	}
 
 	// only match the first applied rule
@@ -96,7 +103,7 @@ public class MessagePasser {
 
         inputQueueLock.lock();
         if (!inputMessage.isEmpty()) {
-            result = inputMessage.removeLast();
+            result = inputMessage.removeFirst();
             inputQueueLock.unlock();
             return result;
         }
@@ -119,7 +126,7 @@ public class MessagePasser {
 		while (true) {
 			inputQueueLock.lock();
 			if (!inputMessage.isEmpty()) {
-				result = inputMessage.removeLast();
+				result = inputMessage.removeFirst();
 				inputQueueLock.unlock();
 				break;
 			}
@@ -145,7 +152,8 @@ public class MessagePasser {
 					try {
 						Thread.sleep(EmptyOutSdSleepTime);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						return;
 					}
 					continue;
 				} else {
@@ -184,8 +192,9 @@ public class MessagePasser {
 	private class ReceiveRunnable implements Runnable {
 		@Override
 		public void run() {
+			ServerSocket s = null;
 			try {
-				ServerSocket s = new ServerSocket(localPort);
+				s = new ServerSocket(localPort);
 				while (true) {
 					Socket incoming = s.accept();
 					Thread t = new Thread(new ReceiveRunnableHandler(incoming));
@@ -197,8 +206,17 @@ public class MessagePasser {
 						s = new ServerSocket(localPort);
 					}
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				if (s != null)
+					try {
+						s.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				return;
 			}
 		}
 	}

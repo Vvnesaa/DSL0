@@ -29,6 +29,9 @@ public class MessagePasserTest {
 			System.out.println(test2.toString());
 			System.out.println(test3.toString());
 			System.out.println(test4.toString());
+			
+			MP1.close();
+			MP2.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
