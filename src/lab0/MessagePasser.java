@@ -57,10 +57,12 @@ public class MessagePasser {
 	// m1(delay) -> m2(duplicate) : m2, m2, m1
 	// m1(delay) -> m2(delay) -> m3(nothing) : m3, m1, m2
 	// first check config file change
-	public void send(Message message) {
+	public void send(Message m) {
 
 		// Check Config File Change => Problem!!! What if my port change?
 		// interrupt receive thread? How to handle?
+		
+		Message message = new Message(m.getSrc(), m.getDest(), m.getKind(), m.getData());
 
 		message.setId(newID++);
 		ACTION action = checkSendRules(message);
