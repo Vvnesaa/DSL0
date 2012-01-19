@@ -19,10 +19,11 @@ public class Agent {
 
         System.out.println("INSTRUCTIONS\n========================");
         System.out
-                .println("\tTo send message, you can type: send bob MESSAGE_KIND CONTENT<RETURN>");
-        System.out
-                .println("\tTo receive messages, you can type: receive<RETURN>");
-        System.out.println("\tTo receive messages, you can type: quit<RETURN>");
+                .println("\tTo send message, type: send RECEIVER MESSAGE_KIND CONTENT<RETURN>");
+        System.out.println("\tTo receive messages, type: receive<RETURN>");
+
+        System.out.println("\tTo receive all message, type: all<RETURN>");
+        System.out.println("\tTo quit, type: quit<RETURN>");
 
         boolean shouldContinue = true;
         while (shouldContinue) {
@@ -40,6 +41,10 @@ public class Agent {
                     System.out.println("" + (++counter) + ": " + message);
                     message = proxy.nonblockReceive();
                 }
+                System.out.println("<end-of-new-message>");
+            } else if (normalize(line).startsWith("all")) {
+                Message message = proxy.nonblockReceive();
+                System.out.println(message);
                 System.out.println("<end-of-new-message>");
             } else if (normalize(line).startsWith("send")) {
                 String[] parts = line.split("\\s+", 4);
