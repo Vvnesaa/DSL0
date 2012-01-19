@@ -1,6 +1,6 @@
 Configuration:
   - Name: alice
-    IP: 128.237.169.148
+    IP: 128.237.168.135
     Port: 12344
   - Name: bob
     IP: 128.237.169.148
