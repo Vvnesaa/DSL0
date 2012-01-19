@@ -37,7 +37,7 @@ public class Agent {
                 Message message = proxy.nonblockReceive();
                 int counter = 0;
                 while (message != null) {
-                    System.out.println("\t" + (++counter) + ": " + message);
+                    System.out.println("" + (++counter) + ": " + message);
                     message = proxy.nonblockReceive();
                 }
                 System.out.println("<end-of-new-message>");

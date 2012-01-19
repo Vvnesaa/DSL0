@@ -22,6 +22,7 @@ SendRules:
     Kind: Request
 
 ReceiveRules:
-  - Action: duplicate
-    Src: charlie
-    Nth: 3
+  - Action: drop
+    Src: alice
+  - Action: delay
+    Src: bob
