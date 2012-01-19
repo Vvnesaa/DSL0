@@ -74,7 +74,7 @@ public class Rule {
 	// --- Utilities
 	private boolean itemMatches(String ruleField, String messageField) {
 		// if expected is not set, then it should be automatically be true
-		return ruleField == null || messageField == ruleField;
+		return ruleField == null || messageField.equals(ruleField);
 	}
 
 	private boolean itemMatches(int ruleField, int messageField) {
