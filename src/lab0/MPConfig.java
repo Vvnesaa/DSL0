@@ -131,10 +131,6 @@ public class MPConfig {
 
     public void updateConfiguration() {
         timestampeLock.lock();
-        System.out.println("current time stamp: " + this.timestamp);
-        System.out.println("file time stamp: " + getTimeStamp(configFilename));
-        System.out
-                .println("Should updated? " + (getTimeStamp(configFilename) > this.timestamp));
 
         if (getTimeStamp(configFilename) > this.timestamp) {
             try {

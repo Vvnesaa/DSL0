@@ -5,12 +5,14 @@ public class Rule {
         ACTION result = ACTION.NOTHING;
         if (itemMatches(this.src, message.getSrc())
                 && itemMatches(this.id, message.getId())
-                && itemMatches(this.nth, counter)
                 && itemMatches(this.kind, message.getKind())
                 && itemMatches(this.dest, message.getDest())) {
-            result = this.action;
+            if (itemMatches(this.nth, counter)) {
+                result = this.action;
+            }
+            counter += 1;
         }
-        counter += 1;
+
         return result;
     }
 
@@ -71,7 +73,7 @@ public class Rule {
     public int getCounter() {
         return counter;
     }
-    
+
     public void setCounter(int counter) {
         this.counter = counter;
     }
