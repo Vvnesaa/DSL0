@@ -46,7 +46,7 @@ public class MessagePasser {
 		List<Rule> rules = currentConfig.getSendRules();
 		ACTION result = ACTION.NOTHING;
 		for (Rule r : rules) {
-			ACTION temp = r.matches(m, 0); // HAS PROBLEM!!!
+			ACTION temp = r.matches(m); // HAS PROBLEM!!!
 			if (result == ACTION.NOTHING)
 				result = temp; 
 		}
@@ -179,7 +179,7 @@ public class MessagePasser {
 		List<Rule> rules = currentConfig.getReceiveRules();
 		ACTION result = ACTION.NOTHING;
 		for (Rule r : rules) {
-			ACTION temp = r.matches(m, 0); // HAS PROBLEM!!!
+			ACTION temp = r.matches(m); // HAS PROBLEM!!!
 			if (result == ACTION.NOTHING)
 				result = temp; 
 		}
