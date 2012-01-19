@@ -28,11 +28,13 @@ public class MessagePasser {
 	private Lock delayInputLock = new ReentrantLock();
 	private int newID = 0;
 	private String localName;
+	private int localPort = 0;
 
 	public MessagePasser(String configFilename, String localName)
 			throws FileNotFoundException {
 		this.localName = localName;
 		currentConfig = new MPConfig(configFilename, localName);
+		localPort = currentConfig.getNodes().get(localName).getPort();
 
 		Thread tSend = new Thread(new SendRunnable());
 		Thread tReceive = new Thread(new ReceiveRunnable());
@@ -61,6 +63,8 @@ public class MessagePasser {
 
 		// Check Config File Change => Problem!!! What if my port change?
 		// interrupt receive thread? How to handle?
+		
+		currentConfig.updateConfiguration();
 		
 		Message message = new Message(m.getSrc(), m.getDest(), m.getKind(), m.getData());
 
@@ -91,6 +95,8 @@ public class MessagePasser {
 
 		// Check Config File Change => Problem!!! What if my port change?
 		// interrupt receive thread? How to handle?
+		
+		currentConfig.updateConfiguration();
 
 		Message result;
 		while (true) {
@@ -162,12 +168,17 @@ public class MessagePasser {
 		@Override
 		public void run() {
 			try {
-				int port = currentConfig.getNodes().get(localName).getPort();
-				ServerSocket s = new ServerSocket(port);
+				ServerSocket s = new ServerSocket(localPort);
 				while (true) {
 					Socket incoming = s.accept();
 					Thread t = new Thread(new ReceiveRunnableHandler(incoming));
 					t.start();
+					int temp = currentConfig.getNodes().get(localName).getPort();
+					if (temp != localPort) {
+						localPort = temp;
+						s.close();
+						s = new ServerSocket(localPort);
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
