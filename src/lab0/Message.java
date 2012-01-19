@@ -47,9 +47,10 @@ public class Message implements Serializable {
     public void setData(Serializable data) {
         this.data = data;
     }
-    
+
     public String toString() {
-    	return "Src=" + src + "\n" + "Dest=" + dest + "\n" + "Kind=" + kind + "\n" + "ID=" + id + "\n" + "Data=\n" + data + "\n"; 
+        return "Src:" + src + "\n" + "Dest:" + dest + "\n" + "Kind:" + kind
+                + "\n" + "ID:" + id + "\n" + "Data:" + data + "\n";
     }
 
 }
