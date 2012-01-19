@@ -18,8 +18,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import org.yaml.snakeyaml.Yaml;
 
 public class MPConfig {
-    public MPConfig(String configFilename, String localName)
-            throws IOException {
+    public MPConfig(String configFilename, String localName) throws IOException {
         this.configFilename = configFilename;
         timestamp = loadConfiguration(configFilename);
     }
@@ -28,8 +27,7 @@ public class MPConfig {
         return new File(filepath).lastModified();
     }
 
-    private long loadConfiguration(String configFilename)
-            throws IOException {
+    private long loadConfiguration(String configFilename) throws IOException {
         Yaml yaml = new Yaml();
 
         File configFile = new File(configFilename);
@@ -133,6 +131,11 @@ public class MPConfig {
 
     public void updateConfiguration() {
         timestampeLock.lock();
+        System.out.println("current time stamp: " + this.timestamp);
+        System.out.println("file time stamp: " + getTimeStamp(configFilename));
+        System.out
+                .println("Should updated? " + (getTimeStamp(configFilename) > this.timestamp));
+
         if (getTimeStamp(configFilename) > this.timestamp) {
             try {
                 timestamp = loadConfiguration(configFilename);
