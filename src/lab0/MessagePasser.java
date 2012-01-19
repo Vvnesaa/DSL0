@@ -1,4 +1,5 @@
 package lab0;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,6 +89,22 @@ public class MessagePasser {
 		}
 	}
 
+	// TODO mostly copy and paste from receive(), should refactor the duplicate part
+    // later
+    public Message nonblockReceive() {
+        Message result;
+
+        inputQueueLock.lock();
+        if (!inputMessage.isEmpty()) {
+            result = inputMessage.removeLast();
+            inputQueueLock.unlock();
+            return result;
+        }
+        inputQueueLock.unlock();
+
+        return null;
+    }
+	
 	// user get message from head of inputMessage queue
 	// block while inputMessage queue is empty
 	// first check config file change
