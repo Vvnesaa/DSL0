@@ -99,6 +99,9 @@ public class MessagePasser {
 	// TODO mostly copy and paste from receive(), should refactor the duplicate part
     // later
     public Message nonblockReceive() {
+    	
+    	currentConfig.updateConfiguration();
+    	
         Message result;
 
         inputQueueLock.lock();
@@ -216,7 +219,6 @@ public class MessagePasser {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				return;
 			}
 		}
 	}
@@ -225,6 +227,9 @@ public class MessagePasser {
 	// but still need to check all rules for "Nth"
 	private ACTION checkReceiveRules(Message m) {
 		List<Rule> rules = currentConfig.getReceiveRules();
+		
+		//System.out.println("receive rules #:" + rules.size());
+		
 		ACTION result = ACTION.NOTHING;
 		for (Rule r : rules) {
 			ACTION temp = r.matches(m); // HAS PROBLEM!!!
