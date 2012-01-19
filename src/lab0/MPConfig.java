@@ -105,17 +105,14 @@ public class MPConfig {
 
     // --- Accessers
     public List<Rule> getSendRules() {
-        updateConfiguration();
         return sendRules;
     }
 
     public List<Rule> getReceiveRules() {
-        updateConfiguration();
         return receiveRules;
     }
 
     public Map<String, Node> getNodes() {
-        updateConfiguration();
         return nodes;
     }
 
@@ -130,7 +127,7 @@ public class MPConfig {
         return actionMapper;
     }
 
-    private void updateConfiguration() {
+    public void updateConfiguration() {
         timestampeLock.lock();
         if (getTimeStamp(configFilename) > this.timestamp) {
             try {
