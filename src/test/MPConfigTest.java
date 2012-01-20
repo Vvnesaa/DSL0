@@ -21,7 +21,7 @@ import org.junit.Test;
 public class MPConfigTest {
 
     @Test
-    public void testMPConfig() {
+    public void testMPConfig() throws IOException {
         try {
             MPConfig mpconfig = new MPConfig("src/test/config.yaml", "bob");
 
@@ -86,7 +86,7 @@ public class MPConfigTest {
         writer.print(buffer);
         writer.close();
         
-
+        config.updateConfiguration();
         assertEquals(2, config.getReceiveRules().size());
         new File(path).delete();
     }

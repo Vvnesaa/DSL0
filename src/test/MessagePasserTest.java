@@ -1,13 +1,14 @@
 package test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import lab0.Message;
 import lab0.MessagePasser;
 
 // very simple test. I just make different situations with config & msg header & msg content
 public class MessagePasserTest {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		try {
 			MessagePasser MP1 = new MessagePasser("src/test/config.yaml", "alice");
 			String data1 = "MessageFromAliceToBob";
