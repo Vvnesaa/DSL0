@@ -44,7 +44,9 @@ public class Agent {
                 System.out.println("<end-of-new-message>");
             } else if (normalize(line).startsWith("all")) {
                 Message message = proxy.nonblockReceive();
-                System.out.println(message);
+                if (message != null) {
+                    System.out.println(message);
+                }
                 System.out.println("<end-of-new-message>");
             } else if (normalize(line).startsWith("send")) {
                 String[] parts = line.split("\\s+", 4);
