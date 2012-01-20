@@ -34,7 +34,7 @@ public class Agent {
             if (normalize(line).startsWith("quit")) {
                 System.out.print("quit");
                 shouldContinue = false;
-            } else if (normalize(line).startsWith("receive")) {
+            } else if (normalize(line).startsWith("all")) {
                 Message message = proxy.nonblockReceive();
                 int counter = 0;
                 while (message != null) {
@@ -42,7 +42,7 @@ public class Agent {
                     message = proxy.nonblockReceive();
                 }
                 System.out.println("<end-of-new-message>");
-            } else if (normalize(line).startsWith("all")) {
+            } else if (normalize(line).startsWith("receive")) {
                 Message message = proxy.nonblockReceive();
                 if (message != null) {
                     System.out.println(message);
