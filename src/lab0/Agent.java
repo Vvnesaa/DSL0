@@ -33,6 +33,7 @@ public class Agent {
 
             if (normalize(line).startsWith("quit")) {
                 System.out.print("quit");
+                proxy.close();
                 shouldContinue = false;
             } else if (normalize(line).startsWith("all")) {
                 Message message = proxy.nonblockReceive();

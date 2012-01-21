@@ -32,6 +32,7 @@ public class MessagePasser {
 	private int localPort = 0;
 	private Thread tReceive;
 	private Thread tSend;
+	private ServerSocket s;
 
 	public MessagePasser(String configFilename, String localName)
 			throws IOException {
@@ -46,7 +47,13 @@ public class MessagePasser {
 	}
 	
 	public void close() {
-		tReceive.interrupt();
+		//tReceive.interrupt();
+		try {
+			s.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
 		tSend.interrupt();
 	}
 
@@ -195,7 +202,7 @@ public class MessagePasser {
 	private class ReceiveRunnable implements Runnable {
 		@Override
 		public void run() {
-			ServerSocket s = null;
+			s = null;
 			try {
 				s = new ServerSocket(localPort);
 				while (true) {
@@ -210,15 +217,7 @@ public class MessagePasser {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (s != null)
-					try {
-						s.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				//e.printStackTrace();
 			}
 		}
 	}
